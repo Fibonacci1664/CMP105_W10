@@ -14,7 +14,7 @@ public:
 	~TileMap();
 
 	// Loads and stores the spritesheet containing all the tiles required to build the level/section
-	void loadTexture(const char* filename);
+	bool loadTexture(const char* filename);
 	// Receives an array of GameObjects representing the tile set (in order)
 	void setTileSet(std::vector<GameObject> ts);
 	// Receives and array of integers and map dimensions representing the map (where and what tiles to place).
@@ -31,8 +31,8 @@ public:
 	void setPosition(sf::Vector2f pos) { position = pos; };
 
 protected:
-	std::vector<GameObject> tileSet;
-	std::vector<int> tileMap;
+	std::vector<GameObject> tileSet;			// A list of individual tiles
+	std::vector<int> map;
 	std::vector<GameObject> levelAssets;
 	sf::Texture texture;
 	sf::Vector2u mapSize;

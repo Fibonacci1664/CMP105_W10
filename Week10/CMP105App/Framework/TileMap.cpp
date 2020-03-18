@@ -8,6 +8,7 @@ TileMap::TileMap()
 
 TileMap::~TileMap()
 {
+
 }
 
 // Uses window pointer to render level/section. Tile by Tile.
@@ -20,9 +21,14 @@ void TileMap::render(sf::RenderWindow* window)
 }
 
 // Loads and stores the spritesheet containing all the tiles required to build the level/section
-void TileMap::loadTexture(const char* filename)
+bool TileMap::loadTexture(const char* filename)
 {
-	texture.loadFromFile(filename);
+	if (texture.loadFromFile(filename))
+	{
+		return true;
+	}
+
+	return false;
 }
 
 // Receives an array of GameObjects representing the tile set (in order)
@@ -34,24 +40,24 @@ void TileMap::setTileSet(std::vector<GameObject> ts)
 // Receives and array of integers and map dimensions representing the map (where and what tiles to place).
 void TileMap::setTileMap(std::vector<int> tm, sf::Vector2u mapDimensions)
 {
-	tileMap = tm;
+	map = tm;
 	mapSize = mapDimensions;
 }
 
 // Once provided with the map and tile set, builds the level, creating an array of tile sprites positioned based on the map. Ready to render.
 void TileMap::buildLevel()
 {
-	if (tileSet.size() > 0 && tileMap.size() > 0)
+	if (tileSet.size() > 0 && map.size() > 0)
 	{
 		int x, y = 0;
 		sf::Vector2f tileSize(tileSet[0].getSize().x, tileSet[0].getSize().y);
 
-		for (int i = 0; i < (int)tileMap.size(); i++)
+		for (int i = 0; i < (int)map.size(); i++)
 		{
 			x = i % mapSize.x;
 			y = (int)floor(i / mapSize.x);
-			tileSet[tileMap[i]].setPosition(position.x + (x * tileSize.x), position.y + (y * tileSize.y));
-			levelAssets.push_back(tileSet[tileMap[i]]);
+			tileSet[map[i]].setPosition(position.x + (x * tileSize.x), position.y + (y * tileSize.y));
+			levelAssets.push_back(tileSet[map[i]]);
 			levelAssets[i].setTexture(&texture);
 		}
 	}
