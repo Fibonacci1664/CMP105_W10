@@ -5,6 +5,7 @@
 #include "TileMapManager.h"
 #include <string>
 #include <iostream>
+#include "Player.h"
 
 
 class Level{
@@ -15,6 +16,10 @@ public:
 	void handleInput(float dt);
 	void update(float dt);
 	void render();
+	void initPlayer();
+	void initTextures();
+	void checkTileCollisions();
+	void initTextBox();
 
 private:
 	// Default functions for rendering to the screen.
@@ -26,4 +31,11 @@ private:
 	Input* input;
 
 	TileMapManager tmm;
+	sf::Texture player_texture;
+	Player player;
+	sf::RectangleShape colBox;
+	sf::RectangleShape playerPosBox;
+	sf::RectangleShape textBox;
+	sf::Text text;
+	sf::Font font;
 };
