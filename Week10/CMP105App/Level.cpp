@@ -17,6 +17,12 @@ Level::Level(sf::RenderWindow* hwnd, Input* in)
 	colBox.setPosition(sf::Vector2f((player.getPosition().x + (player.getSize().x / 5)), player.getPosition().y + 18));
 	colBox.setSize(sf::Vector2f(30, 50));
 
+	OriginBox.setFillColor(sf::Color(0, 0, 0, 0));
+	OriginBox.setOutlineColor(sf::Color::Green);
+	OriginBox.setOutlineThickness(1.0f);
+	OriginBox.setPosition(sf::Vector2f(player.getPosition().x + player.getOrigin().x, player.getPosition().y + player.getOrigin().y));
+	OriginBox.setSize(sf::Vector2f(player.getSize().x, player.getSize().y));
+
 	playerPosBox.setFillColor(sf::Color(0, 0, 0, 0));
 	playerPosBox.setOutlineColor(sf::Color::White);
 	playerPosBox.setOutlineThickness(1.0f);
@@ -86,6 +92,7 @@ void Level::render()
 	tmm.render(window);
 	window->draw(player);
 	window->draw(colBox);
+	//window->draw(OriginBox);
 	window->draw(playerPosBox);
 	window->draw(textBox);
 	window->draw(text);
@@ -116,9 +123,10 @@ void Level::initPlayer()
 {
 	player.setInput(input);
 	player.setWindow(window);
-	player.setSize(sf::Vector2f(58.9f, 68));				// Max size to accomodate ALL sprites.
-	player.setPosition(100, 100);
-	player.setTexture(&player_texture);
+	player.setSize(sf::Vector2f(58.9f, 68));				// Max size to accomodate ALL sprites.	
+	player.setPosition(300, 100);
+	player.setTexture(&player_texture);	
+	player.setCollisionBox(50, 20, 30, 50);
 }
 
 void Level::checkTileCollisions()

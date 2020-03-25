@@ -15,7 +15,8 @@ public:
 	void collisionResponse(GameObject* collider);
 	bool getMovingRight();
 	bool getMovingLeft();
-	void setIsOnGround(bool l_onGround);
+	void setIsFalling(bool l_isFalling);
+	void setIsOnGround(bool l_isOnGround);
 
 protected:
 	Animation attack;
@@ -47,6 +48,7 @@ private:
 	bool movingLeft;
 	bool movingRight;
 	bool isJumping;
+	bool isFalling;
 	bool onGround;
 	bool isAttacking;
 

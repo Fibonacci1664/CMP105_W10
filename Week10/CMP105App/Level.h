@@ -34,6 +34,7 @@ private:
 	sf::Texture player_texture;
 	Player player;
 	sf::RectangleShape colBox;
+	sf::RectangleShape OriginBox;
 	sf::RectangleShape playerPosBox;
 	sf::RectangleShape textBox;
 	sf::Text text;

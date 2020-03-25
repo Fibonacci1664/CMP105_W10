@@ -22,6 +22,7 @@ Player::Player()
 	movingLeft = false;
 	movingRight = true;						// Even thought the player hasnt moved any direction when they first spawn this needs to be true for the move logic to work.
 	isJumping = false;
+	isFalling = true;
 	onGround = false;
 	isAttacking = false;
 	setVelocity(sf::Vector2f(100, -350));
@@ -33,7 +34,6 @@ Player::Player()
 	gravityScalar = 100;
 	gravitationalAccel = sf::Vector2f(0, 9.8f) * gravityScalar;
 
-	setCollisionBox(getSize().x / 5, 20, 30, 50);
 }
 
 Player::~Player()
@@ -47,7 +47,8 @@ Player::~Player()
 
 void Player::update(float dt)
 {
-	if (!onGround)
+	// If were falling OR jumping then apply gravity.
+	if (isFalling || isJumping)
 	{
 		gravityFall(dt);
 	}
@@ -102,12 +103,12 @@ void Player::handleInput(float dt)
 	}
 
 	// If were JUMPING
-	if (input->isKeyDown(sf::Keyboard::Space) && onGround)
+ 	if (input->isKeyDown(sf::Keyboard::Space) && onGround)
 	{
 		checkJumping(dt);
 	}
 
-	if (!onGround)
+	if (!onGround && isJumping)
 	{
 		if (movingLeft)
 		{
@@ -162,19 +163,21 @@ void Player::gravityFall(float dt)
 	// v = u + at.
 	stepVelocity += gravitationalAccel * dt;
 
-	setPosition(getPosition() + displacement);	
+	setPosition(getPosition() + displacement);
+
+	isFalling = true;
 }
 
-void Player::checkGround()
-{
-	if ((getPosition().y + getSize().y) > window->getSize().y)
-	{
-		setPosition(getPosition().x, window->getSize().y - getSize().y);
-		stepVelocity = sf::Vector2f(0, 0);
-		onGround = true;
-		isJumping = false;
-	}
-}
+//void Player::checkGround()
+//{
+//	if ((getPosition().y + getSize().y) > window->getSize().y)
+//	{
+//		setPosition(getPosition().x, window->getSize().y - getSize().y);
+//		stepVelocity = sf::Vector2f(0, 0);
+//		onGround = true;
+//		isJumping = false;
+//	}
+//}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -378,47 +381,54 @@ void Player::checkTileCollisions(GameObject* col)
 	float xDiff = tileCentre.x - xColBoxCentre;	
 	float yDiff = tileCentre.y - yColBoxCentre;			// Top will give me the y value.
 
+	float leftXDiff = getCollisionBox().left - getPosition().x;
+	//float rightXDiff = (getPosition().x + getSize().x) - (getCollisionBox().left + getCollisionBox().width);
+	float topYDiff = getCollisionBox().top - getPosition().y;
+
 	// X-axis collision.
 	if (std::abs(xDiff) > std::abs(yDiff))
 	{
 		std::cout << "X-axis collision!\n";
 
-		// Right hand collission.
+		// Right hand side of tile collission.
 		if (xDiff < 0)
 		{
 			// THIS IS ALMOST!
 			std::cout << "Right\n";
 			stepVelocity.x = 0;
 			//onGround = true;
-			setPosition(((col->getPosition().x + col->getSize().x) - 20), getPosition().y);
+			setPosition(sf::Vector2f((col->getPosition().x + col->getSize().x) - leftXDiff, getPosition().y));
 		}
-		else			// Left hand collision.
+		else			// Left hand side of tile collision.
 		{
 			// THIS IS PERFECT DO NOT CHANGE!
 			std::cout << "Left\n";
 			stepVelocity.x = 0;
 			//onGround = true;
-			setPosition((col->getPosition().x - getSize().x) + ((getPosition().x + getSize().x) - (getCollisionBox().left + getCollisionBox().width)), getPosition().y);
+			setPosition(sf::Vector2f(col->getPosition().x - (leftXDiff + getCollisionBox().width), getPosition().y));
 		}
 	}
 	else				// Y-axis collision.
 	{
 		std::cout << "Y-axis collision!\n";
 
-		// Bottom collision.
+		// Bottom of tile collision.
 		if (yDiff < 0)
 		{
 			// THIS IS GOOD DO NOT CHANGE!
 			std::cout << "Bottom\n";
 			stepVelocity.y = 0;
-			setPosition(getPosition().x, (col->getPosition().y + col->getSize().y) - (getCollisionBox().top - getPosition().y));
+			setPosition(sf::Vector2f(getPosition().x, (col->getPosition().y + col->getSize().y)));
 		}
-		else			// Top collision.
+		else			// Top of tile collision.
 		{
 			// THIS IS GOOD DO NOT CHANGE!
 			std::cout << "Top\n";
-			stepVelocity = sf::Vector2f(0, 0);
+			stepVelocity.y = 0;
+			setPosition(sf::Vector2f(getPosition().x, col->getPosition().y - getSize().y));
 			onGround = true;
+			isJumping = false;
+			isFalling = false;
 		}
 	}
 }
@@ -447,8 +457,12 @@ bool Player::getMovingLeft()
 	return movingLeft;
 }
 
-void Player::setIsOnGround(bool l_onGround)
+void Player::setIsFalling(bool l_isFalling)
 {
-	onGround = l_onGround;
+	isFalling = l_isFalling;
 }
 
+void Player::setIsOnGround(bool l_isOnGround)
+{
+	onGround = l_isOnGround;
+}

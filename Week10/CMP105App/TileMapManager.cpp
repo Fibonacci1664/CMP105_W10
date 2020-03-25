@@ -67,8 +67,8 @@ void TileMapManager::createMap()
 	1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0,
 	4, 6, 1, 3, 0, 0, 0, 0, 0, 0, 4, 6, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 4, 6, 0, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 4, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 4, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 0,
+	0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 4, 6, 0,
 	0, 0, 0, 0, 0, 0, 0, 0, 4, 6, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3,
 	};
 
@@ -92,8 +92,11 @@ void TileMapManager::checkTileCollision(Player* l_player)
 			if (Collision::checkBoundingBox(l_player, &(*world)[i]))
 			{
 				l_player->collisionResponse(&(*world)[i]);
-				//break;
 			}
-		}	
+		}
+		else			// If were not colliding with anything then we must be in the air, so set falling to true.
+		{
+			l_player->setIsFalling(true);
+		}
 	}
 }
